@@ -13,7 +13,7 @@ int in4 = 10;
 int enbB=11;      
 int dongcoservo = 8;   
 
-int gioihan = 20;//khoảng cách nhận biết vật 
+int gioihan = 30;//khoảng cách nhận biết vật 
 int i;
 int x = 0;
 unsigned long thoigian; 
@@ -100,8 +100,8 @@ void loop()
 }
 void dithang()
 {
-  analogWrite(enbA, 100);
-  analogWrite(enbB, 100);
+  analogWrite(enbA, 100); // tăng 100 thì nó chạy càng,ngược lại 
+  analogWrite(enbB, 100); // tăng 100 thì nó chạy càng,ngược lại
   digitalWrite(in1, 0);
   digitalWrite(in2, 1);
   digitalWrite(in3, 0);

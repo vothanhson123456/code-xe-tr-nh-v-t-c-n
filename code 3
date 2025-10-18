@@ -1,0 +1,140 @@
+#include <Servo.h> 
+  const int motorA1  = 3;  
+  const int motorA2  = 10;  
+  const int motorB1  = 11; 
+  const int motorB2  = 9;  
+  const int den  = 12;
+  const int loa = 2 ;   
+  int goc;
+  Servo myservo;
+  #define TRIG  8
+  #define ECHO  7   
+unsigned long xung;
+int distance, khoangcach,kc_trai,kc_phai;
+
+void do_khoang_cach()
+{
+  digitalWrite(TRIG , LOW);   delayMicroseconds(2);
+  digitalWrite(TRIG , HIGH); delayMicroseconds(10);
+  digitalWrite(TRIG , LOW);
+  xung = pulseIn(ECHO, HIGH, 100000);
+  distance = xung / 29.1 / 2;
+  if(distance <= 0) {khoangcach = 0;}
+  else {khoangcach = distance;}
+}
+
+
+
+
+void setup() 
+{
+    pinMode(motorA1, OUTPUT);
+    pinMode(motorA2, OUTPUT);
+    pinMode(motorB1, OUTPUT);
+    pinMode(motorB2, OUTPUT);
+    pinMode(loa, OUTPUT);
+    pinMode(den, OUTPUT); 
+    pinMode(TRIG , OUTPUT);
+    pinMode(ECHO , INPUT);               
+    myservo.attach(6); 
+    Serial.begin(9600);
+    nhin_thang(); 
+}
+ 
+void loop() 
+{
+
+do_khoang_cach();
+if(khoangcach > 30)  {  bat_den(); tien();}
+if((khoangcach <= 30)&&(khoangcach > 2))
+{ pip_2();  
+  tat_den(); 
+  dung_lai(); 
+  pip_1();
+  nhin_trai(); 
+  nhin_thang(); 
+  pip_1();
+  nhin_phai();  
+  nhin_thang(); 
+  if((kc_trai<30)&&(kc_phai<30)) {lui(); dung_lai();pip_1();nhin_trai(); nhin_thang(); pip_1();nhin_phai();  nhin_thang(); }
+  if(kc_trai > kc_phai)  {re_trai(); dung_lai(); bat_den(); tien();  }
+  if(kc_trai <= kc_phai) {re_phai();dung_lai();  bat_den(); tien(); }
+  
+  
+}
+
+
+
+}
+
+void tien()
+{       analogWrite(motorA1, 180+30);      analogWrite(motorA2, 0); 
+        analogWrite(motorB1, 180);      analogWrite(motorB2, 0);
+  
+  }
+void re_trai()
+{       analogWrite(motorA1, 255); analogWrite(motorA2, 0);  
+        analogWrite(motorB1, 0);      analogWrite(motorB2, 255); 
+        delay(500);
+}
+void re_phai()
+{
+        analogWrite(motorA1, 0);           analogWrite(motorA2, 255); 
+        analogWrite(motorB1, 255);      analogWrite(motorB2, 0);
+        delay(500);
+}
+void lui()
+{       analogWrite(motorA1, 0);   analogWrite(motorA2, 255); 
+        analogWrite(motorB1, 0);   analogWrite(motorB2, 255); 
+        delay(1000);
+  }
+
+  void dung_lai()
+  {    
+       analogWrite(motorA1, 0);  analogWrite(motorA2, 0); 
+       analogWrite(motorB1, 0);  analogWrite(motorB2, 0);
+       delay(2000);
+    }
+
+void pip_1()
+{digitalWrite(loa, HIGH); delay(200);digitalWrite(loa, LOW);
+
+}
+void pip_2()
+{ digitalWrite(loa, HIGH); delay(50);digitalWrite(loa, LOW);delay(50);
+  digitalWrite(loa, HIGH); delay(50);digitalWrite(loa, LOW);delay(50);
+}
+
+void bat_den()
+{
+  digitalWrite(den, HIGH);
+  }
+void tat_den()
+{
+  digitalWrite(den, LOW);
+  }  
+  void nhin_trai()
+ {
+  for(goc = 90; goc <= 160; goc += 1) 
+  {                                  
+    myservo.write(goc);              
+    delay(1);                       
+  } 
+  do_khoang_cach(); kc_trai = khoangcach; delay(1000);
+
+ }
+void nhin_thang()
+{ myservo.write(90); delay(1000);
+  }
+
+  
+void nhin_phai()
+{
+  for(goc = 90; goc>=20; goc-=1)     // goes from 180 degrees to 0 degrees 
+  {                                
+    myservo.write(goc);              // tell servo to go to gocition in variable 'goc' 
+    delay(1);                       // waits 15ms for the servo to reach the gocition 
+  } 
+ do_khoang_cach(); kc_phai = khoangcach; delay(1000);
+}
+
